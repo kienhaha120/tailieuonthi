@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phòng thi TSA</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📝 Phòng thi TSA</h1>
+    <button onclick="logout()" class="logout-btn">Đăng xuất</button>
+    <p><strong>⏰ Thời gian còn lại: <span id="countdown">05:00</span></strong></p>
+    <form id="quizForm">
+      <div id="questions"></div>
+      <button type="submit" class="btn">Nộp bài</button>
+    </form>
+    <div id="result" class="result-box"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "1. Hàm số y = x² có đồ thị là gì?",
+        options: ["Đường thẳng", "Parabol", "Hyperbol", "Elip"],
+        answer: 1
+      },
+      {
+        question: "2. Đạo hàm của sin(x) là gì?",
+        options: ["cos(x)", "-sin(x)", "-cos(x)", "tan(x)"],
+        answer: 0
+      },
+      {
+        question: "3. Tích phân của 1/x là?",
+        options: ["x", "ln|x|", "e^x", "1/x²"],
+        answer: 1
+      }
+    ];
+
+    const questionsDiv = document.getElementById("questions");
+
+    questions.forEach((q, i) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `
+        <p><strong>${q.question}</strong></p>
+        ${q.options.map((opt, j) => `
+          <label>
+            <input type="radio" name="q${i}" value="${j}"> ${opt}
+          </label><br>`).join("")}
+        <hr>
+      `;
+      questionsDiv.appendChild(div);
+    });
+
+    // Countdown 5 phút
+    let timeLeft = 300; // 5 phút
+    const countdownEl = document.getElementById("countdown");
+
+    const timer = setInterval(() => {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      countdownEl.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+      timeLeft--;
+      if (timeLeft < 0) {
+        clearInterval(timer);
+        submitQuiz();
+      }
+    }, 1000);
+
+    document.getElementById("quizForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      submitQuiz();
+    });
+
+    function submitQuiz() {
+      clearInterval(timer);
+      let score = 0;
+      questions.forEach((q, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if (selected && parseInt(selected.value) === q.answer) {
+          score++;
+        }
+      });
+      const resultEl = document.getElementById("result");
+      resultEl.innerHTML = `<h3>✅ Bạn đúng ${score}/${questions.length} câu.</h3>`;
+    }
+
+    function logout() {
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
