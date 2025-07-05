@@ -1,0 +1,23 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Đăng nhập hệ thống</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="login-container">
+    <h1>🎓 HỆ THỐNG ÔN TẬP</h1>
+    <div class="login-box">
+      <input type="text" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Mật khẩu" />
+      <button onclick="login()">Đăng nhập</button>
+      <p id="error" class="error-text"></p>
+    </div>
+  </div>
+  <script src="data/users.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
