@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thành viên - Danh sách đề</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📚 ĐỀ THI TRỰC TUYẾN</h1>
+    <button onclick="logout()" class="logout-btn">Đăng xuất</button>
+
+    <div class="card-grid" id="fileList"></div>
+  </div>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "index.html";
+    }
+
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (!user || user.role !== "member") {
+      alert("Bạn không có quyền truy cập!");
+      window.location.href = "index.html";
+    }
+
+    function renderFiles() {
+      const fileList = document.getElementById("fileList");
+      fileList.innerHTML = "";
+
+      const files = JSON.parse(localStorage.getItem("uploadedFiles") || "[]");
+
+      if (files.length === 0) {
+        fileList.innerHTML = "<p>Chưa có đề nào được tải lên.</p>";
+        return;
+      }
+
+      files.forEach((file, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="https://source.unsplash.com/300x200/?exam,education&sig=${index}" alt="Đề thi">
+          <h3>${file.name}</h3>
+          <p>Dung lượng: ${(file.size / 1024).toFixed(2)} KB</p>
+          <a href="#" class="btn">📥 Tải về</a>
+          <a href="tsa.html" class="btn">📝 Thi TSA</a>
+        `;
+        fileList.appendChild(card);
+      });
+    }
+
+    renderFiles();
+  </script>
+</body>
+</html>
