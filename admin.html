@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản trị Admin</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>👑 Bảng điều khiển Admin</h1>
+    <button onclick="logout()" class="logout-btn">Đăng xuất</button>
+
+    <section class="card">
+      <h2>➕ Tạo tài khoản thành viên</h2>
+      <input type="text" id="newEmail" placeholder="Email thành viên">
+      <input type="password" id="newPassword" placeholder="Mật khẩu">
+      <button onclick="addMember()">Tạo tài khoản</button>
+      <p id="addStatus"></p>
+    </section>
+
+    <section class="card">
+      <h2>📋 Danh sách tài khoản thành viên</h2>
+      <ul id="memberList"></ul>
+    </section>
+
+    <section class="card">
+      <h2>📂 Tải file đề từ máy tính</h2>
+      <input type="file" id="uploadFile">
+      <button onclick="uploadFile()">Tải lên</button>
+      <p id="uploadStatus"></p>
+    </section>
+  </div>
+
+  <script src="data/users.js"></script>
+  <script>
+    const listEl = document.getElementById("memberList");
+    const statusEl = document.getElementById("addStatus");
+    const uploadStatus = document.getElementById("uploadStatus");
+
+    function loadMembers() {
+      listEl.innerHTML = "";
+      USERS.filter(u => u.role === "member").forEach(user => {
+        const li = document.createElement("li");
+        li.textContent = `${user.email}`;
+        listEl.appendChild(li);
+      });
+    }
+
+    function addMember() {
+      const email = document.getElementById("newEmail").value.trim();
+      const password = document.getElementById("newPassword").value.trim();
+      if (!email || !password) {
+        statusEl.textContent = "⚠️ Nhập đầy đủ thông tin.";
+        return;
+      }
+      USERS.push({ email, password, role: "member" });
+      statusEl.textContent = `✅ Đã tạo tài khoản: ${email}`;
+      document.getElementById("newEmail").value = "";
+      document.getElementById("newPassword").value = "";
+      loadMembers();
+    }
+
+    function uploadFile() {
+      const fileInput = document.getElementById("uploadFile");
+      const file = fileInput.files[0];
+      if (!file) {
+        uploadStatus.textContent = "⚠️ Chưa chọn file!";
+        return;
+      }
+      // Giả lập lưu trữ vào danh sách file (sẽ làm ở member.html)
+      let uploaded = JSON.parse(localStorage.getItem("uploadedFiles") || "[]");
+      uploaded.push({ name: file.name, size: file.size });
+      localStorage.setItem("uploadedFiles", JSON.stringify(uploaded));
+      uploadStatus.textContent = `✅ Đã tải lên: ${file.name}`;
+      fileInput.value = "";
+    }
+
+    function logout() {
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "index.html";
+    }
+
+    // Chỉ cho admin truy cập
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (!user || user.role !== "admin") {
+      alert("Bạn không có quyền truy cập trang này!");
+      window.location.href = "index.html";
+    } else {
+      loadMembers();
+    }
+  </script>
+</body>
+</html>
